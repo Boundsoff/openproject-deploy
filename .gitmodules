@@ -1,0 +1,6 @@
+[submodule "live/modules/gitlab_integration"]
+	path = live/modules/gitlab_integration
+	url = git@github.com:btey/openproject-gitlab-integration.git
+[submodule "modules/gitlab_integration"]
+	path = modules/gitlab_integration
+	url = git@github.com:btey/openproject-gitlab-integration.git

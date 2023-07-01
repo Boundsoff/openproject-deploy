@@ -27,6 +27,9 @@ x-op-app: &app
     # set to true to enable the email receiving feature. See ./docker/cron for more options
     IMAP_ENABLED: "${IMAP_ENABLED:-false}"
   volumes:
+    - './Gemfile.lock:/app/Gemfile.lock'
+    - './Gemfile.modules:/app/Gemfile.modules'
+    - './modules/gitlab_integration:/app/modules/gitlab_integration'
     - "${OPDATA:-opdata}:/var/openproject/assets"
 
 name: bf-openproject
