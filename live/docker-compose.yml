@@ -3,6 +3,8 @@ version: "3.7"
 networks:
   frontend:
   backend:
+  proxy:
+    external: true
 
 volumes:
   pgdata:
@@ -55,9 +57,8 @@ services:
   proxy:
     <<: [*image, *restart_policy]
     command: "./docker/prod/proxy"
-    ports:
-      - "${PORT:-8080}:80"
     environment:
+      SERVER_NAME: 'openproject.local'
       APP_HOST: web
       OPENPROJECT_RAILS__RELATIVE__URL__ROOT: "${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}"
     depends_on:
@@ -71,12 +72,18 @@ services:
     networks:
       - frontend
       - backend
+      - proxy
     depends_on:
       - db
       - cache
       - seeder
     labels:
-      - autoheal=true
+      autoheal: true
+      traefik.enable: "true"
+      traefik.http.routers.bf-openproject.rule: "Host(`openproject.local`)"
+      traefik.http.routers.bf-openproject.tls: "true"
+      traefik.http.routers.bf-openproject.tls.certresolver: "main"
+      traefik.http.services.bf-openproject.loadbalancer.server.port: "8080"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}/health_checks/default"]
       interval: 10s
