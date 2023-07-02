@@ -33,6 +33,8 @@ x-op-app: &app
     - './Gemfile.modules:/app/Gemfile.modules'
     - './modules/gitlab_integration:/app/modules/gitlab_integration'
     - "${OPDATA:-opdata}:/var/openproject/assets"
+  extra_hosts:
+    - 'gitlab.local:172.28.5.1'
 
 name: bf-openproject
 services:
@@ -53,18 +55,6 @@ services:
     <<: *restart_policy
     networks:
       - backend
-
-  proxy:
-    <<: [*image, *restart_policy]
-    command: "./docker/prod/proxy"
-    environment:
-      SERVER_NAME: 'openproject.local'
-      APP_HOST: web
-      OPENPROJECT_RAILS__RELATIVE__URL__ROOT: "${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}"
-    depends_on:
-      - web
-    networks:
-      - frontend
 
   web:
     <<: *app
